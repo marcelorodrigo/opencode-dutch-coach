@@ -1,0 +1,56 @@
+{
+  "name": "opencode-dutch-coach",
+  "version": "0.1.0",
+  "description": "An OpenCode plugin that teaches A1/A2 learners how to correct common Dutch mistakes.",
+  "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "main": "./dist/plugin.js",
+  "types": "./dist/plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./server": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    }
+  },
+  "files": [
+    "dist",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "opencode": ">=1.0.0 <2"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepack": "pnpm run build",
+    "test": "pnpm run typecheck && pnpm run build && node --import tsx --test tests/*.test.ts",
+    "test:unit": "node --import tsx --test tests/plugin.test.ts tests/skill.test.ts",
+    "test:package": "node --import tsx --test tests/package.test.ts",
+    "test:integration": "node --import tsx --test tests/opencode.integration.test.ts"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "dutch",
+    "language-learning",
+    "a1",
+    "a2"
+  ],
+  "license": "MIT",
+  "private": false,
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.0.0 <2"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.18.23",
+    "@types/node": "^22.20.1",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3"
+  }
+}
