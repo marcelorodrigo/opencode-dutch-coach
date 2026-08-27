@@ -103,8 +103,8 @@ test("fails with a domain-specific error when the skill asset is missing", async
   const directory = await mkdtemp(join(tmpdir(), "opencode-dutch-coach-"));
   const pluginDirectory = join(directory, "dist");
   await mkdir(pluginDirectory);
-  const pluginPath = join(pluginDirectory, "plugin.ts");
-  const source = await readFile(new URL("../src/plugin.ts", import.meta.url), "utf8");
+  const pluginPath = join(pluginDirectory, "plugin.js");
+  const source = await readFile(new URL("../dist/plugin.js", import.meta.url), "utf8");
   await writeFile(pluginPath, source);
   const realDirectory = await realpath(directory);
 

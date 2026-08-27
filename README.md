@@ -7,7 +7,7 @@ command for direct access.
 ## Local Testing
 
 The package is currently intended to be tested locally before publication.
-Install Node.js 22 or newer and pnpm 11.24.0 before running the commands below.
+Install Node.js 26 or newer and pnpm 11.24.0 before running the commands below.
 
 ```sh
 pnpm pack

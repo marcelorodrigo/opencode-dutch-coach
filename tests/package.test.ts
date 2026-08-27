@@ -35,6 +35,7 @@ test("pnpm artifact contains the plugin, skill, and publication metadata", async
 
     assert.equal(pack.name, packageJson.name);
     assert.equal(pack.version, packageJson.version);
+    assert.equal(packageJson.engines.node, ">=26");
     assert.ok(pack.filename.endsWith(`${packageJson.name}-${packageJson.version}.tgz`));
     assert.deepEqual(
       pack.files.map(({ path }) => path).sort(),
