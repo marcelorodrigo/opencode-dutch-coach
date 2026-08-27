@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import assert from "node:assert/strict";
 
@@ -31,7 +32,7 @@ test("pnpm artifact contains the plugin, skill, and publication metadata", async
     );
     const pack = JSON.parse(stdout) as PackResult;
     assert.ok(pack);
-    const packageJson = JSON.parse(await readFile(join(repositoryDirectory.pathname, "package.json"), "utf8"));
+    const packageJson = JSON.parse(await readFile(join(fileURLToPath(repositoryDirectory), "package.json"), "utf8"));
 
     assert.equal(pack.name, packageJson.name);
     assert.equal(pack.version, packageJson.version);

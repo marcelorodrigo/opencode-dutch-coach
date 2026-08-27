@@ -3,11 +3,12 @@ import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import assert from "node:assert/strict";
 
 const execFileAsync = promisify(execFile);
-const repositoryDirectory = new URL("..", import.meta.url).pathname;
+const repositoryDirectory = fileURLToPath(new URL("..", import.meta.url));
 
 type PackResult = {
   filename: string;
