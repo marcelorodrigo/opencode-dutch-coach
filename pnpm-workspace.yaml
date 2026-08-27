@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: true
+  msgpackr-extract: true
+  opencode-ai: true
+minimumReleaseAgeExclude:
+  - '@types/node@26.4.0'
