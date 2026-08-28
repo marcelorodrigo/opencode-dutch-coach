@@ -8,13 +8,20 @@ level is unclear.
 
 ## Installation
 
-Install the package from npm in an OpenCode project:
+Install the plugin globally with the OpenCode CLI:
 
 ```sh
-pnpm add --save-dev opencode-dutch-coach
+opencode plugin opencode-dutch-coach --global
 ```
 
-Add the plugin to that project's `opencode.json`:
+This installs the npm package and adds it to OpenCode's global configuration. To
+install it for the current project only, omit `--global`:
+
+```sh
+opencode plugin opencode-dutch-coach
+```
+
+You can also add the plugin to `opencode.json` manually:
 
 ```json
 {
@@ -22,6 +29,10 @@ Add the plugin to that project's `opencode.json`:
   "plugin": ["opencode-dutch-coach"]
 }
 ```
+
+OpenCode installs npm plugins automatically at startup and caches them in its
+OpenCode data directory. Quit and restart OpenCode after installing the plugin
+or changing its configuration.
 
 ## Local Testing
 
