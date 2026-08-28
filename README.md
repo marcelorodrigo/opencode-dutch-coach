@@ -62,6 +62,17 @@ resolution outside the fixture:
 
 Quit and restart OpenCode after changing the plugin or its configuration.
 
+## Automatic Updates
+
+When OpenCode starts, npm installations that use `latest` or a version range are
+checked for a newer Dutch Coach release. If one is available, the plugin clears
+OpenCode's cached package copy and shows a notification asking you to restart
+OpenCode to finish the update.
+
+Pinned versions, local paths, and Git-based installations are not changed. Update
+checks and notifications fail silently, so they never prevent the Dutch coaching
+skills or `/dutch` command from loading.
+
 ## Usage
 
 Use `/dutch` with text to request a correction:

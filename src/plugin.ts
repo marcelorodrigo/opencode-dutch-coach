@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import type { Config, Hooks, Plugin, PluginInput } from "@opencode-ai/plugin";
 
+import { startAutoUpdate } from "./update.js";
+
 const packageDirectory = dirname(fileURLToPath(import.meta.url));
 const skillsDirectory = resolve(packageDirectory, "../skills");
 const skillFile = resolve(skillsDirectory, "dutch-a1-a2-coach", "SKILL.md");
@@ -78,8 +80,18 @@ function createConfigHook({
   };
 }
 
-const dutchCoachPlugin: Plugin = async (_input: PluginInput): Promise<Hooks> => ({
-  config: createConfigHook(),
-});
+type StartAutoUpdate = (input: PluginInput) => void;
+
+export function createDutchCoachPlugin(startUpdate: StartAutoUpdate = startAutoUpdate): Plugin {
+  return async (input: PluginInput): Promise<Hooks> => {
+    startUpdate(input);
+
+    return {
+      config: createConfigHook(),
+    };
+  };
+}
+
+const dutchCoachPlugin = createDutchCoachPlugin();
 
 export default dutchCoachPlugin;

@@ -45,6 +45,8 @@ test("pnpm artifact contains the plugin, skill, and publication metadata", async
         "README.md",
         "dist/plugin.d.ts",
         "dist/plugin.js",
+        "dist/update.d.ts",
+        "dist/update.js",
         "package.json",
         "skills/dutch-a1-a2-coach/SKILL.md",
         "skills/dutch-a2-b1-coach/SKILL.md",

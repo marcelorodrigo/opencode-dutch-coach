@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 
 import type { Config, PluginInput } from "@opencode-ai/plugin";
 
-import dutchCoachPlugin from "../src/plugin.js";
+import { createDutchCoachPlugin } from "../src/plugin.js";
 
 const expectedSkillDirectory = join(import.meta.dirname, "..", "skills");
 
@@ -32,10 +32,23 @@ function assertRegisteredConfig(
 }
 
 async function register(config: TestConfig): Promise<void> {
+  const dutchCoachPlugin = createDutchCoachPlugin(() => {});
   const hooks = await dutchCoachPlugin({} as PluginInput);
   assert.ok(hooks.config);
   await hooks.config(config);
 }
+
+test("starts the automatic updater once during plugin initialization", async () => {
+  const input = {} as PluginInput;
+  const calls: PluginInput[] = [];
+  const dutchCoachPlugin = createDutchCoachPlugin((receivedInput) => {
+    calls.push(receivedInput);
+  });
+
+  await dutchCoachPlugin(input);
+
+  assert.deepEqual(calls, [input]);
+});
 
 test("registers the packaged skill and Dutch command in an empty config", async () => {
   const config: TestConfig = {};
@@ -117,12 +130,23 @@ test("fails with a domain-specific error when the skill asset is missing", async
   const pluginDirectory = join(directory, "dist");
   await mkdir(pluginDirectory);
   const pluginPath = join(pluginDirectory, "plugin.mts");
+  const updatePath = join(pluginDirectory, "update.js");
   const source = await readFile(new URL("../dist/plugin.js", import.meta.url), "utf8");
+  const updateSource = await readFile(new URL("../dist/update.js", import.meta.url), "utf8");
   await writeFile(pluginPath, source);
+  await writeFile(updatePath, updateSource);
+  const nodeModulesDirectory = join(directory, "node_modules");
+  await mkdir(nodeModulesDirectory);
+  await symlink(
+    new URL(".", import.meta.resolve("semver")).pathname,
+    join(nodeModulesDirectory, "semver"),
+    "dir",
+  );
   const realDirectory = await realpath(directory);
 
   try {
-    const plugin = (await import(`file://${pluginPath}?missing-asset-test`)).default;
+    const module = await import(`file://${pluginPath}?missing-asset-test`);
+    const plugin = module.createDutchCoachPlugin(() => {});
     const hooks = await plugin({} as PluginInput);
     assert.ok(hooks.config);
     await assert.rejects(hooks.config({}), (error: unknown) => {
