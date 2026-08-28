@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create or update release pull request
-        uses: googleapis/release-please-action@v4
+        # v4
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071  # yamllint disable-line rule:line-length
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           target-branch: master
