@@ -59,8 +59,12 @@
   "devDependencies": {
     "@opencode-ai/plugin": "^1.18.23",
     "@types/node": "^26.4.0",
+    "@types/semver": "^7.8.0",
     "opencode-ai": "1.18.23",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "semver": "^7.8.5"
   }
 }
