@@ -1,6 +1,6 @@
 {
   "name": "opencode-dutch-coach",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "An OpenCode plugin that teaches A1/A2 learners how to correct common Dutch mistakes.",
   "type": "module",
   "packageManager": "pnpm@11.24.0",
@@ -45,6 +45,13 @@
   ],
   "license": "MIT",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelorodrigo/opencode-dutch-coach.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@opencode-ai/plugin": ">=1.0.0 <2"
   },

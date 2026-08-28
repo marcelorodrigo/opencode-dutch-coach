@@ -4,22 +4,39 @@ An OpenCode 1.x plugin that provides a Dutch A1/A2 correction and practice
 skill. It explains common mistakes in simple English and adds a `/dutch`
 command for direct access.
 
+## Installation
+
+Install the package from npm in an OpenCode project:
+
+```sh
+pnpm add --save-dev opencode-dutch-coach
+```
+
+Add the plugin to that project's `opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["opencode-dutch-coach"]
+}
+```
+
 ## Local Testing
 
-The package is currently intended to be tested locally before publication.
 Install Node.js 26 or newer and pnpm 11.24.0 before running the commands below.
 
 ```sh
 pnpm pack
 ```
 
-Install the generated tarball in an OpenCode project:
+Install the generated tarball in an OpenCode project, replacing `<version>` with
+the version printed by `pnpm pack`:
 
 ```sh
-pnpm add --save-dev /absolute/path/to/opencode-dutch-coach-0.1.0.tgz
+pnpm add --save-dev /absolute/path/to/opencode-dutch-coach-<version>.tgz
 ```
 
-Add the plugin to that project's `opencode.json`:
+Add the plugin to that project's `opencode.json` if it is not already present:
 
 ```json
 {
