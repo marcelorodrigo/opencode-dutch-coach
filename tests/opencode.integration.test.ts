@@ -134,7 +134,7 @@ test("OpenCode discovers the skill and command from the packed artifact", async 
     ));
     assert.equal(
       resolvedConfig.command.dutch.description,
-      "Correct Dutch text or start an A1/A2 Dutch coaching session.",
+      "Correct Dutch text or start an adaptive A1/A2 or A2/B1 Dutch coaching session.",
     );
     assert.deepEqual(resolvedConfig.skills.urls, ["https://example.test/skills"]);
     assert.equal(resolvedConfig.command.existing.template, "Keep this command");
@@ -149,6 +149,10 @@ test("OpenCode discovers the skill and command from the packed artifact", async 
     const discoveredSkills = JSON.parse(skills.stdout) as DiscoveredSkill[];
     assert.ok(
       discoveredSkills.some(({ name }) => name === "dutch-a1-a2-coach"),
+      `Discovered skills: ${discoveredSkills.map(({ name }) => name).join(", ")}`,
+    );
+    assert.ok(
+      discoveredSkills.some(({ name }) => name === "dutch-a2-b1-coach"),
       `Discovered skills: ${discoveredSkills.map(({ name }) => name).join(", ")}`,
     );
   } finally {

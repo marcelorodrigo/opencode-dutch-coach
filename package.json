@@ -1,7 +1,7 @@
 {
   "name": "opencode-dutch-coach",
   "version": "0.0.1",
-  "description": "An OpenCode plugin that teaches A1/A2 learners how to correct common Dutch mistakes.",
+  "description": "An OpenCode plugin that teaches A1/A2 and A2/B1 learners how to correct common Dutch mistakes.",
   "type": "module",
   "packageManager": "pnpm@11.24.0",
   "main": "./dist/plugin.js",
@@ -41,7 +41,8 @@
     "dutch",
     "language-learning",
     "a1",
-    "a2"
+    "a2",
+    "b1"
   ],
   "license": "MIT",
   "private": false,

@@ -1,8 +1,10 @@
 # opencode-dutch-coach
 
-An OpenCode 1.x plugin that provides a Dutch A1/A2 correction and practice
-skill. It explains common mistakes in simple English and adds a `/dutch`
-command for direct access.
+An OpenCode 1.x plugin that provides Dutch A1/A2 and A2/B1 correction and
+practice skills. It explains common mistakes in English and adds a `/dutch`
+command for direct access. The command selects the appropriate level from an
+explicit target, the request and current conversation, and uses A1/A2 when the
+level is unclear.
 
 ## Installation
 
@@ -68,9 +70,10 @@ Use `/dutch` with text to request a correction:
 /dutch Ik heb gisteren naar school gegaan.
 ```
 
-Use `/dutch` without text to start an interactive coaching session. The skill
-is also available when you explicitly ask OpenCode to correct, review, or help
-you practise Dutch at A1/A2 level.
+Use `/dutch` without text to start an interactive coaching session. The command
+supports both A1/A2 and A2/B1 practice. You can state the target level directly,
+or ask OpenCode to correct, review, or help you practise Dutch and let it infer
+the level from the request and current conversation.
 
 The plugin adds its skill path without removing existing skill paths or URLs.
 It also does not replace an existing `dutch` command. If another configuration
