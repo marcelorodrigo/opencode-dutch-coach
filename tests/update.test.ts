@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -75,7 +75,11 @@ test("updateRemoveDirectory selects an updateable OpenCode wrapper", async () =>
 
   try {
     assert.equal(
-      await updateRemoveDirectory(fixture.packageDirectory, "opencode-dutch-coach"),
+      await updateRemoveDirectory(
+        fixture.packageDirectory,
+        "opencode-dutch-coach",
+        fixture.openCodePackagesDirectory,
+      ),
       fixture.wrapperDirectory,
     );
   } finally {
@@ -88,7 +92,11 @@ test("updateRemoveDirectory skips a version-locked OpenCode wrapper", async () =
 
   try {
     assert.equal(
-      await updateRemoveDirectory(fixture.packageDirectory, "opencode-dutch-coach"),
+      await updateRemoveDirectory(
+        fixture.packageDirectory,
+        "opencode-dutch-coach",
+        fixture.openCodePackagesDirectory,
+      ),
       undefined,
     );
   } finally {
@@ -114,8 +122,10 @@ test("updateRemoveDirectory skips packages outside an OpenCode wrapper", async (
   }
 });
 
-test("updateRemoveDirectory never selects a project root for a flat installation", async () => {
-  const rootDirectory = await mkdtemp(join(tmpdir(), "opencode-dutch-coach-project-"));
+test("updateRemoveDirectory never selects a project root named like an OpenCode wrapper", async () => {
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), "opencode-dutch-coach-project-"));
+  const rootDirectory = join(temporaryDirectory, "opencode-dutch-coach@latest");
+  await mkdir(rootDirectory);
   const packageDirectory = join(rootDirectory, "node_modules", "opencode-dutch-coach");
   await writePackageJson(rootDirectory, {
     dependencies: { "opencode-dutch-coach": "^0.1.0" },
@@ -131,7 +141,41 @@ test("updateRemoveDirectory never selects a project root for a flat installation
       undefined,
     );
   } finally {
-    await rm(rootDirectory, { recursive: true, force: true });
+    await rm(temporaryDirectory, { recursive: true, force: true });
+  }
+});
+
+test("checkAutoUpdate never removes a project root named like an OpenCode wrapper", async () => {
+  const temporaryDirectory = await mkdtemp(join(tmpdir(), "opencode-dutch-coach-project-"));
+  const rootDirectory = join(temporaryDirectory, "opencode-dutch-coach@latest");
+  const packageDirectory = join(rootDirectory, "node_modules", "opencode-dutch-coach");
+  const removed: string[] = [];
+  await writePackageJson(rootDirectory, {
+    dependencies: { "opencode-dutch-coach": "^0.1.0" },
+  });
+  await writePackageJson(packageDirectory, {
+    name: "opencode-dutch-coach",
+    version: "0.1.0",
+  });
+  await writeFile(join(rootDirectory, "project-sentinel"), "keep\n", "utf8");
+
+  try {
+    const result = await checkAutoUpdate(new AbortController().signal, {
+      findPackageDirectory: async () => packageDirectory,
+      readPackageJson: async () => ({ name: "opencode-dutch-coach", version: "0.1.0" }),
+      fetchLatestVersion: async () => "0.2.0",
+      updateRemoveDirectory,
+      removeDirectory: async (path) => {
+        removed.push(path);
+        await rm(path, { recursive: true, force: true });
+      },
+    });
+
+    assert.deepEqual(result, { updated: false });
+    assert.deepEqual(removed, []);
+    assert.equal(await readFile(join(rootDirectory, "project-sentinel"), "utf8"), "keep\n");
+  } finally {
+    await rm(temporaryDirectory, { recursive: true, force: true });
   }
 });
 
@@ -296,9 +340,11 @@ async function createWrapperFixture(specification: string): Promise<{
   rootDirectory: string;
   wrapperDirectory: string;
   packageDirectory: string;
+  openCodePackagesDirectory: string;
 }> {
   const rootDirectory = await mkdtemp(join(tmpdir(), "opencode-dutch-coach-update-"));
-  const wrapperDirectory = join(rootDirectory, `opencode-dutch-coach@${specification}`);
+  const openCodePackagesDirectory = join(rootDirectory, "opencode", "packages");
+  const wrapperDirectory = join(openCodePackagesDirectory, `opencode-dutch-coach@${specification}`);
   const packageDirectory = join(wrapperDirectory, "node_modules", "opencode-dutch-coach");
 
   await writePackageJson(wrapperDirectory, {
@@ -309,7 +355,7 @@ async function createWrapperFixture(specification: string): Promise<{
     version: "0.1.0",
   });
 
-  return { rootDirectory, wrapperDirectory, packageDirectory };
+  return { rootDirectory, wrapperDirectory, packageDirectory, openCodePackagesDirectory };
 }
 
 async function writePackageJson(directory: string, data: Record<string, unknown>): Promise<void> {

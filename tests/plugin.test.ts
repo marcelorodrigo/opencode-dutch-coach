@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import assert from "node:assert/strict";
 
@@ -138,7 +139,7 @@ test("fails with a domain-specific error when the skill asset is missing", async
   const nodeModulesDirectory = join(directory, "node_modules");
   await mkdir(nodeModulesDirectory);
   await symlink(
-    new URL(".", import.meta.resolve("semver")).pathname,
+    fileURLToPath(new URL(".", import.meta.resolve("semver"))),
     join(nodeModulesDirectory, "semver"),
     "dir",
   );

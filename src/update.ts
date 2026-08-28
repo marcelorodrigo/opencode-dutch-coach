@@ -1,5 +1,6 @@
 import { readFile, rm } from "node:fs/promises";
-import { basename, dirname, join } from "node:path";
+import { homedir } from "node:os";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { PluginInput } from "@opencode-ai/plugin";
@@ -148,6 +149,7 @@ async function findPackageDirectory(name: string): Promise<string | undefined> {
 export async function updateRemoveDirectory(
   packageDirectory: string,
   name: string,
+  openCodePackagesDirectory = getOpenCodePackagesDirectory(),
 ): Promise<string | undefined> {
   const packageParent = dirname(packageDirectory);
   const nodeModulesDirectory = basename(packageParent).startsWith("@")
@@ -159,6 +161,10 @@ export async function updateRemoveDirectory(
   }
 
   const wrapperDirectory = dirname(nodeModulesDirectory);
+  if (!openCodePackagesDirectory || !isOpenCodeWrapper(wrapperDirectory, name, openCodePackagesDirectory)) {
+    return undefined;
+  }
+
   const specification = getWrapperSpecification(wrapperDirectory, name);
 
   if (!specification || !isAutoUpdatableSpecification(specification)) {
@@ -166,6 +172,28 @@ export async function updateRemoveDirectory(
   }
 
   return wrapperDirectory;
+}
+
+function getOpenCodePackagesDirectory(): string | undefined {
+  const cacheDirectory = process.env.XDG_CACHE_HOME || join(homedir(), ".cache");
+  return cacheDirectory ? join(cacheDirectory, "opencode", "packages") : undefined;
+}
+
+function isOpenCodeWrapper(
+  wrapperDirectory: string,
+  name: string,
+  openCodePackagesDirectory: string,
+): boolean {
+  const [scope] = name.split("/");
+  const parentDirectory = name.startsWith("@")
+    ? scope
+      ? join(openCodePackagesDirectory, scope)
+      : undefined
+    : openCodePackagesDirectory;
+
+  return (
+    parentDirectory !== undefined && resolve(dirname(wrapperDirectory)) === resolve(parentDirectory)
+  );
 }
 
 function getWrapperSpecification(wrapperDirectory: string, name: string): string | undefined {
