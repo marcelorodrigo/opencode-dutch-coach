@@ -45,9 +45,22 @@ test("registers the packaged skill and Dutch command in an empty config", async 
   assert.ok(config.command);
   assert.ok(config.command.dutch);
   assert.deepEqual(config.skills.paths, [expectedSkillDirectory]);
-  assert.equal(config.command.dutch.description, "Correct Dutch text or start an A1/A2 Dutch coaching session.");
+  assert.equal(
+    config.command.dutch.description,
+    "Correct Dutch text or start an adaptive A1/A2 or A2/B1 Dutch coaching session.",
+  );
   assert.match(config.command.dutch.template, /dutch-a1-a2-coach/);
-  assert.match(config.command.dutch.template, /\$ARGUMENTS/);
+  assert.match(config.command.dutch.template, /dutch-a2-b1-coach/);
+  assert.match(config.command.dutch.template, /explicit target level/i);
+  assert.match(config.command.dutch.template, /When evidence is weak/i);
+  assert.match(
+    config.command.dutch.template,
+    /empty, whitespace-only, or only an explicit level \(A1, A2, A2-B1, or B1\)/i,
+  );
+  assert.match(
+    config.command.dutch.template,
+    /correction mode only when `\$ARGUMENTS` contains learner Dutch text/i,
+  );
 });
 
 test("preserves existing skills, URLs, commands, and unrelated config", async () => {

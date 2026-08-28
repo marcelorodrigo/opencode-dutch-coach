@@ -9,11 +9,13 @@ const skillsDirectory = resolve(packageDirectory, "../skills");
 const skillFile = resolve(skillsDirectory, "dutch-a1-a2-coach", "SKILL.md");
 
 const dutchCommand = {
-  description: "Correct Dutch text or start an A1/A2 Dutch coaching session.",
+  description: "Correct Dutch text or start an adaptive A1/A2 or A2/B1 Dutch coaching session.",
   template: [
-    "Use the `dutch-a1-a2-coach` skill for this request.",
-    "If `$ARGUMENTS` contains non-whitespace text, correct that exact Dutch text.",
-    "If `$ARGUMENTS` is empty or whitespace-only, start an interactive Dutch coaching session.",
+    "Choose between the `dutch-a1-a2-coach` and `dutch-a2-b1-coach` skills for this request.",
+    "Prioritize an explicit target level (A1, A2, A2-B1, or B1). If no level is stated, infer from the learner's goal, Dutch text, and current conversation.",
+    "A single complex sentence does not override an explicit target level. When evidence is weak, use `dutch-a1-a2-coach`.",
+    "If `$ARGUMENTS` is empty, whitespace-only, or only an explicit level (A1, A2, A2-B1, or B1), start an interactive Dutch coaching session with the selected skill.",
+    "Use correction mode only when `$ARGUMENTS` contains learner Dutch text; preserve any explicit target level while correcting that text.",
   ].join("\n"),
 };
 
